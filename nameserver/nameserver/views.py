@@ -96,6 +96,7 @@ def eventList(request):
                 try:
                     aka = Akas(ra = ra,
                                decl = decl,
+                               event_id_id = event.id,
                                object_id = internalObjectId,
                                aka = internalName,
                                survey_database = survey_database,
@@ -109,17 +110,6 @@ def eventList(request):
                     pass # Do nothing - will eventually raise some errors on the form
 
             else:
-                # Add the aka
-                aka = Akas(ra = ra,
-                           decl = decl,
-                           object_id = internalObjectId,
-                           aka = internalName,
-                           survey_database = survey_database,
-                           user_id = userId,
-                           source_ip = None,
-                           htm16id = htm16id)  # Field name made lowercase.
-                aka.save()
-
                 y = years[year](ra = ra,
                                 decl = decl,
                                 object_id = internalObjectId,
@@ -145,6 +135,18 @@ def eventList(request):
 
                            #survey_database = survey_database,
                 event.save()
+
+                # Add the aka
+                aka = Akas(ra = ra,
+                           decl = decl,
+                           event_id_id = acquiredId,
+                           object_id = internalObjectId,
+                           aka = internalName,
+                           survey_database = survey_database,
+                           user_id = userId,
+                           source_ip = None,
+                           htm16id = htm16id)  # Field name made lowercase.
+                aka.save()
 
 
     else:

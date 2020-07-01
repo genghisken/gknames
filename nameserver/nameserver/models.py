@@ -8,25 +8,6 @@
 from django.db import models
 
 
-class Akas(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    aka = models.CharField(max_length=30, blank=True, null=True)
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'akas'
-        unique_together = (('object_id', 'survey_database'),)
-
-
-
 class Events(models.Model):
     id = models.PositiveIntegerField(primary_key=True)
     ra = models.FloatField()
@@ -43,6 +24,26 @@ class Events(models.Model):
         managed = False
         db_table = 'events'
         unique_together = (('year', 'base26suffix'),)
+
+
+class Akas(models.Model):
+    id = models.AutoField(primary_key=True)
+    event_id = models.ForeignKey(Events, to_field='id', db_column='event_id', on_delete = models.CASCADE)
+    object_id = models.BigIntegerField()
+    aka = models.CharField(max_length=30, blank=True, null=True)
+    ra = models.FloatField()
+    decl = models.FloatField()
+    survey_database = models.CharField(max_length=50)
+    user_id = models.CharField(max_length=50)
+    source_ip = models.CharField(max_length=20, blank=True, null=True)
+    date_inserted = models.DateTimeField()
+    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'akas'
+        unique_together = (('object_id', 'survey_database'),)
+
 
 
 class Y2016(models.Model):
