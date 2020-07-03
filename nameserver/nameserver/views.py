@@ -12,6 +12,7 @@ from datetime import datetime
 from django.db import IntegrityError
 
 RADIUS = 3.0 # arcsec
+MULTIPLIER = 10000000
 
 # I can't believe that this works! The events table is not part of my long list,
 # but we can add it here.
@@ -122,7 +123,7 @@ def eventList(request):
 
                 acquiredId = y.pk
                 print(acquiredId)
-                suffix = base26(acquiredId - (10000000 * (year - 2000)))
+                suffix = base26(acquiredId - (MULTIPLIER * (year - 2000)))
                 print(suffix)
                 event = Events(id = acquiredId,
                                ra = ra,
