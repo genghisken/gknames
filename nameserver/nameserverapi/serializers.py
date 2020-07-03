@@ -6,6 +6,7 @@ from gkhtm._gkhtm import htmID
 from gkutils.commonutils import coneSearchHTM, FULL, CAT_ID_RA_DEC_COLS, base26, Struct
 from datetime import datetime
 from django.db import connection
+from django.db import IntegrityError
 
 RADIUS = 3.0 # arcsec
 MULTIPLIER = 10000000
@@ -35,6 +36,7 @@ class EventSerializer(serializers.Serializer):
 
     def save(self):
 
+        from django.conf import settings
         ra = self.validated_data['ra']
         decl = self.validated_data['decl']
         internalObjectId = self.validated_data['internalObjectId']
@@ -49,6 +51,7 @@ class EventSerializer(serializers.Serializer):
             flagDate = datetime.now()
 
         year = flagDate.year
+        replyMessage = 'Object created'
 
         # Is there an object within RADIUS arcsec of this object?
         message, results = coneSearchHTM(ra, decl, RADIUS, 'events', queryType = FULL, conn = connection, django = True)
@@ -61,6 +64,7 @@ class EventSerializer(serializers.Serializer):
         if len(results) > 0:
             event = Struct(**results[0][1])
             separation = results[0][0]
+            replyMessage = 'Object already exists'
 
             try:
                 aka = Akas(ra = ra,
@@ -112,5 +116,9 @@ class EventSerializer(serializers.Serializer):
                        source_ip = None,
                        htm16id = htm16id)
             aka.save()
-            return event
+        objectName = settings.OBJECT_PREFIX + "%d" % (year - 2000) + event.base26suffix
+        #return event
+
+        info = { "event_id": objectName, "info": replyMessage }
+        return info
 
