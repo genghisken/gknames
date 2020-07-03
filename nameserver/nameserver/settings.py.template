@@ -15,6 +15,8 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Set the prefix for the object id you want to return to the requester.
+OBJECT_PREFIX = 'ATLAS'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -26,6 +28,10 @@ SECRET_KEY = 'a-^hg*eas=!hg2wv#)xwvi45(y2pgd3ah!s$(lpyzrx+sxglte'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# Set cookie names for session authentication
+CSRF_COOKIE_NAME = 'csrf_nameserver'
+SESSION_COOKIE_NAME = 'session_nameserver'
 
 # Application definition
 
@@ -51,6 +57,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Added token authentication class
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
 
 ROOT_URLCONF = 'nameserver.urls'
 
