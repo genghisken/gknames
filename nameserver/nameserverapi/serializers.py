@@ -43,7 +43,13 @@ class EventSerializer(serializers.Serializer):
         internalName = self.validated_data['internalName']
         survey_database = self.validated_data['survey_database']
 
-        userId = 'test'
+        # Get the authenticated user, if it exists.
+        userId = 'unknown'
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            userId = request.user
+
+        print (userId)
         htm16id = htmID(16, ra, decl)
 
         flagDate = self.validated_data['flagDate']

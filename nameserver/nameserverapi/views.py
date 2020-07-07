@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 from nameserver.models import Events
 from rest_framework import status
 from .serializers import EventsSerializer, EventSerializer
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins, viewsets
 
 class EventsViewSet(viewsets.ModelViewSet):
@@ -19,6 +21,8 @@ class EventsViewSet(viewsets.ModelViewSet):
 # The inputs to the following class apparently replace APIView
 #class EventView(mixins.ListModelMixin, viewsets.GenericViewSet):
 class EventView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         #events = Events.objects.all()
@@ -26,7 +30,7 @@ class EventView(APIView):
         return Response({"Error": "GET is not implemented for this service."})
 
     def post(self, request, format=None):
-        serializer = EventSerializer(data=request.data)
+        serializer = EventSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             message = serializer.save()
             #return Response(serializer.data, status=status.HTTP_201_CREATED)
