@@ -45,7 +45,9 @@ INSTALLED_APPS = [
     'nameserver',
     'nameserverapi.apps.NameserverapiConfig',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_tables2',
+    'mod_wsgi.server',
 ]
 
 MIDDLEWARE = [
