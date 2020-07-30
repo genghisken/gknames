@@ -25,12 +25,15 @@ class EventsSerializer(serializers.ModelSerializer):
 
 
 # Receive and add a new event
+# Counter is optional - it should only be provided as part of the ingest
+# process for existing data.
 class EventSerializer(serializers.Serializer):
     internalObjectId = serializers.IntegerField(required=True)
     internalName = serializers.CharField(max_length=20)
     ra = serializers.FloatField(required=True)
     decl = serializers.FloatField(required=True)
-    flagDate = serializers.DateField()
+    flagDate = serializers.DateField(required=False, default=datetime.now())
+    counter = serializers.IntegerField(required=False, default=0)
     survey_database = serializers.CharField(required=True, max_length=20)
 
 
@@ -47,16 +50,26 @@ class EventSerializer(serializers.Serializer):
         userId = 'unknown'
         request = self.context.get("request")
         if request and hasattr(request, "user"):
-            userId = request.user
+            userId = str(request.user)
 
-        print (userId)
+        print ("EXTRACTED USER ID = ", userId)
         htm16id = htmID(16, ra, decl)
 
         flagDate = self.validated_data['flagDate']
+        #if not flagDate:
+        #    flagDate = datetime.now()
+
+        year = flagDate.year
+
+        acquiredId = 0
+
+        counter = self.validated_data['counter']
+        if counter is not None and counter > 0:
+            acquiredId = (year - 2000) * MULTIPLIER + counter
+
         if not flagDate:
             flagDate = datetime.now()
 
-        year = flagDate.year
         replyMessage = 'Object created'
 
         # Is there an object within RADIUS arcsec of this object?
@@ -86,16 +99,26 @@ class EventSerializer(serializers.Serializer):
             except IntegrityError as e:
                 #print(e[0])
                 #if e[0] == 1062: # Duplicate Key error
-                pass # Do nothing - will eventually raise some errors on the form
+                replyMessage = 'Duplicate AKA - cannot add AKA'
 
         else:
-            y = years[year](ra = ra,
-                            decl = decl,
-                            object_id = internalObjectId,
-                            survey_database = survey_database,
-                            user_id = userId,
-                            source_ip = None,
-                            htm16id = htm16id)
+            if acquiredId != 0:
+                y = years[year](id = acquiredId,
+                                ra = ra,
+                                decl = decl,
+                                object_id = internalObjectId,
+                                survey_database = survey_database,
+                                user_id = userId,
+                                source_ip = None,
+                                htm16id = htm16id)
+            else:
+                y = years[year](ra = ra,
+                                decl = decl,
+                                object_id = internalObjectId,
+                                survey_database = survey_database,
+                                user_id = userId,
+                                source_ip = None,
+                                htm16id = htm16id)
             y.save()
 
             acquiredId = y.pk
@@ -112,16 +135,22 @@ class EventSerializer(serializers.Serializer):
             event.save()
 
             # Add the aka
-            aka = Akas(ra = ra,
-                       decl = decl,
-                       event_id_id = acquiredId,
-                       object_id = internalObjectId,
-                       aka = internalName,
-                       survey_database = survey_database,
-                       user_id = userId,
-                       source_ip = None,
-                       htm16id = htm16id)
-            aka.save()
+            try:
+                aka = Akas(ra = ra,
+                           decl = decl,
+                           event_id_id = acquiredId,
+                           object_id = internalObjectId,
+                           aka = internalName,
+                           survey_database = survey_database,
+                           user_id = userId,
+                           source_ip = None,
+                           htm16id = htm16id)
+                aka.save()
+            except IntegrityError as e:
+                #print(e[0])
+                #if e[0] == 1062: # Duplicate Key error
+                replyMessage = 'Duplicate AKA - cannot add new AKA'
+
         objectName = settings.OBJECT_PREFIX + "%d" % (year - 2000) + event.base26suffix
         #return event
 
