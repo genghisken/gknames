@@ -7,6 +7,7 @@ from gkutils.commonutils import coneSearchHTM, FULL, CAT_ID_RA_DEC_COLS, base26,
 from datetime import datetime
 from django.db import connection
 from django.db import IntegrityError
+import re
 
 RADIUS = 3.0 # arcsec
 MULTIPLIER = 10000000
@@ -15,6 +16,12 @@ MULTIPLIER = 10000000
 # but we can add it here.
 CAT_ID_RA_DEC_COLS['events'] = [['id', 'ra', 'decl'],1017]
 
+# If we get an internal ATLAS name, we'd like to pull it apart and compare the year
+# with the flag date.  If the year is different form the flag date, use the name
+# year. Otherwise we will create the wrong internal name!
+
+NAME_REGEX = "^ATLAS([0-9][0-9])([a-z]{1,4})$"
+NAME_REGEX_COMPILED = re.compile(NAME_REGEX)
 
 # Return all the events
 class EventsSerializer(serializers.ModelSerializer):
@@ -46,6 +53,12 @@ class EventSerializer(serializers.Serializer):
         internalName = self.validated_data['internalName']
         survey_database = self.validated_data['survey_database']
 
+        nameYear = None
+        if internalName is not None:
+            namecut = NAME_REGEX_COMPILED.search(internalName)
+            if namecut is not None and namecut.group(1) is not None:
+                nameYear = 2000 + int(namecut.group(1))
+
         # Get the authenticated user, if it exists.
         userId = 'unknown'
         request = self.context.get("request")
@@ -60,6 +73,13 @@ class EventSerializer(serializers.Serializer):
         #    flagDate = datetime.now()
 
         year = flagDate.year
+
+        # Sometimes the year in the name does NOT correspond to the flag date.  This is
+        # especially true for objects flagged in the atlas4 database that were originally
+        # discovered in atlas3.
+
+        if nameYear is not None and nameYear != year:
+            year = nameYear
 
         acquiredId = 0
 
@@ -94,8 +114,10 @@ class EventSerializer(serializers.Serializer):
                            survey_database = survey_database,
                            user_id = userId,
                            source_ip = None,
+                           original_flag_date = flagDate,
                            htm16id = htm16id)
-                aka.save()
+                #aka.save()
+                aka.save(force_insert=True)
             except IntegrityError as e:
                 #print(e[0])
                 #if e[0] == 1062: # Duplicate Key error
@@ -119,20 +141,32 @@ class EventSerializer(serializers.Serializer):
                                 user_id = userId,
                                 source_ip = None,
                                 htm16id = htm16id)
-            y.save()
+            try:
+                #y.save()
+                y.save(force_insert=True)
+            except IntegrityError as e:
+                #print(e[0])
+                #if e[0] == 1062: # Duplicate Key error
+                replyMessage = 'Duplicate Year Entry - cannot create year entry'
 
             acquiredId = y.pk
             suffix = base26(acquiredId - (MULTIPLIER * (year - 2000)))
-            event = Events(id = acquiredId,
-                           ra = ra,
-                           decl = decl,
-                           ra_original = ra,
-                           decl_original = decl,
-                           year = year,
-                           base26suffix = suffix,
-                           htm16id = htm16id)
+            try:
+                event = Events(id = acquiredId,
+                               ra = ra,
+                               decl = decl,
+                               ra_original = ra,
+                               decl_original = decl,
+                               year = year,
+                               base26suffix = suffix,
+                               htm16id = htm16id)
 
-            event.save()
+                #event.save()
+                event.save(force_insert=True)
+            except IntegrityError as e:
+                #print(e[0])
+                #if e[0] == 1062: # Duplicate Key error
+                replyMessage = 'Duplicate AKA - cannot add new AKA'
 
             # Add the aka
             try:
@@ -144,8 +178,10 @@ class EventSerializer(serializers.Serializer):
                            survey_database = survey_database,
                            user_id = userId,
                            source_ip = None,
+                           original_flag_date = flagDate,
                            htm16id = htm16id)
-                aka.save()
+                #aka.save()
+                aka.save(force_insert=True)
             except IntegrityError as e:
                 #print(e[0])
                 #if e[0] == 1062: # Duplicate Key error
