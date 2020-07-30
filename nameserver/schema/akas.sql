@@ -10,6 +10,7 @@ CREATE TABLE `akas` (
   `survey_database` varchar(50) NOT NULL,
   `user_id` varchar(50) NOT NULL,
   `source_ip` varchar(20),
+  `original_flag_date` DATE,
   `date_inserted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `htm16ID` bigint unsigned NOT NULL,
   PRIMARY KEY `idx_id` (`id`),

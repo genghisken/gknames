@@ -36,6 +36,7 @@ class Akas(models.Model):
     survey_database = models.CharField(max_length=50)
     user_id = models.CharField(max_length=50)
     source_ip = models.CharField(max_length=20, blank=True, null=True)
+    original_flag_date = models.DateField()
     date_inserted = models.DateTimeField()
     htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
 
