@@ -47,7 +47,7 @@ class Akas(models.Model):
 
 
 
-class Y2016(models.Model):
+class AbstractYear(models.Model):
     id = models.AutoField(primary_key=True)
     object_id = models.BigIntegerField()
     ra = models.FloatField()
@@ -57,247 +57,135 @@ class Y2016(models.Model):
     source_ip = models.CharField(max_length=20, blank=True, null=True)
     date_inserted = models.DateTimeField()
     htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+
+    class Meta:
+        abstract = True
+
+
+class Y2013(AbstractYear):
+
+    class Meta:
+        managed = False
+        db_table = 'y2013'
+        unique_together = (('object_id', 'survey_database'),)
+
+class Y2014(AbstractYear):
+
+    class Meta:
+        managed = False
+        db_table = 'y2014'
+        unique_together = (('object_id', 'survey_database'),)
+
+class Y2015(AbstractYear):
+
+    class Meta:
+        managed = False
+        db_table = 'y2015'
+        unique_together = (('object_id', 'survey_database'),)
+
+class Y2016(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2016'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2017(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2017(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2017'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2018(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2018(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2018'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2019(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2019(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2019'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2020(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2020(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2020'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2021(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2021(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2021'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2022(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2022(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2022'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2023(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2023(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2023'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2024(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2024(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2024'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2025(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2025(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2025'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2026(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2026(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2026'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2027(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2027(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2027'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2028(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2028(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2028'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2029(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2029(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2029'
         unique_together = (('object_id', 'survey_database'),)
 
-
-class Y2030(models.Model):
-    id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
-    ra = models.FloatField()
-    decl = models.FloatField()
-    survey_database = models.CharField(max_length=50)
-    user_id = models.CharField(max_length=50)
-    source_ip = models.CharField(max_length=20, blank=True, null=True)
-    date_inserted = models.DateTimeField()
-    htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
+class Y2030(AbstractYear):
 
     class Meta:
         managed = False
         db_table = 'y2030'
         unique_together = (('object_id', 'survey_database'),)
+
 
