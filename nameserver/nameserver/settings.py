@@ -21,6 +21,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # Set the prefix for the object id you want to return to the requester.
 OBJECT_PREFIX = os.environ.get('DJANGO_OBJECT_PREFIX')
 
+SITE_ID = 1
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -134,7 +135,7 @@ STATIC_URL = PATHPREFIX + '/static/'
 
 # STATICFILES_DIRS tells collectstatic where MY static files are.
 STATICFILES_DIRS = (
-  os.path.join(BASE_DIR, 'site_media'),
+  os.path.join(BASE_DIR, 'staticfiles'),
 )
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
