@@ -13,5 +13,5 @@ CREATE TABLE `y2017` (
   PRIMARY KEY `idx_id` (`id`),
   UNIQUE KEY `idx_object_id_survey_database` (`object_id`, `survey_database`),
   KEY `idx_htm16ID` (`htm16ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=170000001
+) ENGINE=InnoDB AUTO_INCREMENT=170000001
 ;

@@ -2,7 +2,7 @@
 """Generate all the apfit parameters from the DDC files, or calculate them from scratch.
 
 Usage:
-  %s <inputFile> [--survey_database=<survey_database>] [--token=<token>]
+  %s <inputFile> [--survey_database=<survey_database>] [--token=<token>] [--server=<server>] [--serverurl=<serverurl>]
   %s (-h | --help)
   %s --version
 
@@ -11,6 +11,8 @@ Options:
   --version                            Show version.
   --survey_database=<survey_database>  Survey database [default: atlas3]
   --token=<token>                      Survey database [default: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]
+  --server=<server>                    Webserver and port hosting the nameserver [default: http://127.0.0.1:8085].
+  --serverurl=<serverurl>              Webserver URL of the API [default: /sne/nameserver_atlas/eventapi/].
 
 """
 import sys
@@ -33,7 +35,7 @@ def main(argv = None):
     for row in data:
         row["survey_database"] = options.survey_database
         print("echo %s" % json.dumps(row))
-        print("curl -s -X POST http://127.0.0.1:8085/sne/nameserver_atlas/eventapi/ -d '%s' -H 'Content-Type: application/json' -H 'Authorization: Token %s'" % (json.dumps(row), options.token))
+        print("curl -s -X POST %s%s -d '%s' -H 'Content-Type: application/json' -H 'Authorization: Token %s'" % (options.server, options.serverurl, json.dumps(row), options.token))
         print("echo \"\"")
         print("echo \"\"")
 

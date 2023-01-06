@@ -20,6 +20,9 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # Set the prefix for the object id you want to return to the requester.
 OBJECT_PREFIX = os.environ.get('DJANGO_OBJECT_PREFIX')
+# Set the nameing scheme to use, default is where 1 = aab, 2 = aac, etc
+# (alternative is 1 = a, 2 = b, etc).
+OBJECT_NAMING_SCHEME = os.environ.get('DJANGO_OBJECT_NAMING_SCHEME', 'aab')
 
 SITE_ID = 1
 # Quick-start development settings - unsuitable for production
@@ -29,11 +32,16 @@ SITE_ID = 1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
 
 # Set cookie names for session authentication
 CSRF_COOKIE_NAME = 'csrf_' + os.environ.get('DJANGO_MYSQL_DBNAME')
 SESSION_COOKIE_NAME = 'session_' + os.environ.get('DJANGO_MYSQL_DBNAME')
+
+# Uncomment the following line if used behind a proxy server.
+#CSRF_TRUSTED_ORIGINS = ['https://the.proxy.server']
+
 
 # Application definition
 

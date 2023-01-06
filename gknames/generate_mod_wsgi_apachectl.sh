@@ -17,9 +17,17 @@
 # export WSGI_PORT=''
 # export WSGI_PREFIX=''
 #
+# Specifiy what to add as the name prefix
 # export DJANGO_OBJECT_PREFIX='PS'
 # OR
 # export DJANGO_OBJECT_PREFIX='ATLAS'
+#
+# Specify which naming scheme to use. Pan-STARRS uses 1=a
+# and single letters eventually become double, triple, etc
+# but ATLAS uses 1 = aab with leading base26 zeros (a).
+# export DJANGO_OBJECT_NAMING_SCHEME='a'
+# OR
+# export DJANGO_OBJECT_NAMING_SCHEME='aab'
 
 
 if [ -f ~/.config/django/django_env_$CONDA_DEFAULT_ENV ]; then chmod 600 ~/.config/django/django_env_$CONDA_DEFAULT_ENV; source ~/.config/django/django_env_$CONDA_DEFAULT_ENV; fi

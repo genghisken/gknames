@@ -8,6 +8,7 @@ from datetime import datetime
 from django.db import connection
 from django.db import IntegrityError
 import re
+import sys
 
 RADIUS = 3.0 # arcsec
 MULTIPLIER = 10000000
@@ -32,11 +33,13 @@ class EventsSerializer(serializers.ModelSerializer):
 
 
 # Receive and add a new event
+
 # Counter is optional - it should only be provided as part of the ingest
-# process for existing data.
+# process for existing data. Likewise internalName is optional. Note that
+# all optional fields MUST be given a default, even if that is None.
 class EventSerializer(serializers.Serializer):
     internalObjectId = serializers.IntegerField(required=True)
-    internalName = serializers.CharField(max_length=20)
+    internalName = serializers.CharField(required=False, default=None, max_length=20)
     ra = serializers.FloatField(required=True)
     decl = serializers.FloatField(required=True)
     flagDate = serializers.DateField(required=False, default=datetime.now())
@@ -150,6 +153,16 @@ class EventSerializer(serializers.Serializer):
                 replyMessage = 'Duplicate Year Entry - cannot create year entry'
 
             acquiredId = y.pk
+
+            if acquiredId is None:
+                # The object ID and survey name combination must be unique.
+                # This is a very hacky solution that returns a 201 code.
+                # The proper solution is to raise a custom API exception
+                # which will result in a 400 (bad request) error.
+                #return {"error": "Unable to create year entry. The internalObjectId and survey_database combination must be unique."}
+                return { "event_id": None, "event_counter": None, "info": "Unable to create year entry. The internalObjectId and survey_database combination must be unique." }
+                # Need to raise Custom API exception. See docs.
+
             suffix = base26(acquiredId - (MULTIPLIER * (year - 2000)))
             try:
                 event = Events(id = acquiredId,
@@ -190,6 +203,6 @@ class EventSerializer(serializers.Serializer):
         objectName = settings.OBJECT_PREFIX + "%d" % (year - 2000) + event.base26suffix
         #return event
 
-        info = { "event_id": objectName, "info": replyMessage }
+        info = { "event_id": objectName, "event_counter": event.id, "info": replyMessage }
         return info
 

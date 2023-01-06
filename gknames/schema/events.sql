@@ -14,5 +14,5 @@ CREATE TABLE `events` (
   PRIMARY KEY `idx_id` (`id`),
   UNIQUE KEY `idx_year_base26suffix` (`year`,`base26suffix`),
   KEY `idx_htm16ID` (`htm16ID`)
-) ENGINE=MyISAM
+) ENGINE=InnoDB
 ;

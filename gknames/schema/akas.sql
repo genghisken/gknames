@@ -17,5 +17,5 @@ CREATE TABLE `akas` (
   UNIQUE KEY `idx_object_id_survey_database` (`object_id`, `survey_database`),
   KEY `idx_htm16ID` (`htm16ID`),
   KEY `idx_aka` (`aka`)
-) ENGINE=MyISAM
+) ENGINE=InnoDB
 ;
