@@ -34,7 +34,7 @@ def main(argv = None):
     data = readGenericDataFile(options.inputFile, delimiter='\t')
     for row in data:
         row["survey_database"] = options.survey_database
-        print("echo %s" % json.dumps(row))
+        print("echo %s" % json.dumps(row).replace('"', '\\"'))
         print("curl -s -X POST %s%s -d '%s' -H 'Content-Type: application/json' -H 'Authorization: Token %s'" % (options.server, options.serverurl, json.dumps(row), options.token))
         print("echo \"\"")
         print("echo \"\"")

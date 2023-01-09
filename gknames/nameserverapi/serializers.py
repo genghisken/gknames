@@ -179,7 +179,7 @@ class EventSerializer(serializers.Serializer):
             except IntegrityError as e:
                 #print(e[0])
                 #if e[0] == 1062: # Duplicate Key error
-                replyMessage = 'Duplicate AKA - cannot add new AKA'
+                replyMessage = 'Duplicate Event - cannot add new event.'
 
             # Add the aka
             try:
