@@ -2,7 +2,7 @@ DROP TABLE `y2029`;
 
 CREATE TABLE `y2029` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
-  `object_id` bigint unsigned NOT NULL,
+  `object_id` varchar(60) NOT NULL,
   `ra` double NOT NULL,
   `decl` double NOT NULL,
   `survey_database` varchar(50) NOT NULL,

@@ -12,7 +12,7 @@ setup(
     description='Pan-STARRS and ATLAS name server.',
     long_description=readme(),
     long_description_content_type="text/markdown",
-    version="0.0.7",
+    version="0.0.8",
     author='genghisken',
     author_email='ken.w.smith@gmail.com',
     license='MIT',
@@ -26,7 +26,7 @@ setup(
     ],
     install_requires=[
           'mysqlclient',
-          'django',
+          'django<4.2',
           'django-filter',
           'django_tables2',
           'markdown',

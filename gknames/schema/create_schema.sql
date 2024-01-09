@@ -1,3 +1,8 @@
+source 2008.sql
+source 2009.sql
+source 2010.sql
+source 2011.sql
+source 2012.sql
 source 2013.sql
 source 2014.sql
 source 2015.sql

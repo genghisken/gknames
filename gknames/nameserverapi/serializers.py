@@ -3,7 +3,7 @@ from rest_framework import serializers
 from nameserver.models import *
 from nameserver.views import years
 from gkhtm._gkhtm import htmID
-from gkutils.commonutils import coneSearchHTM, FULL, CAT_ID_RA_DEC_COLS, base26, Struct
+from gkutils.commonutils import coneSearchHTM, FULL, CAT_ID_RA_DEC_COLS, base26, Struct, base26Encode
 from datetime import datetime
 from django.db import connection
 from django.db import IntegrityError
@@ -38,13 +38,17 @@ class EventsSerializer(serializers.ModelSerializer):
 # process for existing data. Likewise internalName is optional. Note that
 # all optional fields MUST be given a default, even if that is None.
 class EventSerializer(serializers.Serializer):
-    internalObjectId = serializers.IntegerField(required=True)
+    internalObjectId = serializers.CharField(required=True)
     internalName = serializers.CharField(required=False, default=None, max_length=20)
     ra = serializers.FloatField(required=True)
     decl = serializers.FloatField(required=True)
-    flagDate = serializers.DateField(required=False, default=datetime.now())
+    flagDate = serializers.DateTimeField(required=False, default=datetime.now())
     counter = serializers.IntegerField(required=False, default=0)
     survey_database = serializers.CharField(required=True, max_length=20)
+    # Override the flagDate with a discovery year. Sometimes objects are flagged late.
+    year = serializers.IntegerField(required=False, default=0)
+    # Get the original date inserted.
+    insertDate = serializers.DateTimeField(required=False, default=datetime.now())
 
 
     def save(self):
@@ -55,6 +59,7 @@ class EventSerializer(serializers.Serializer):
         internalObjectId = self.validated_data['internalObjectId']
         internalName = self.validated_data['internalName']
         survey_database = self.validated_data['survey_database']
+        insertDate = self.validated_data['insertDate']
 
         nameYear = None
         if internalName is not None:
@@ -72,10 +77,14 @@ class EventSerializer(serializers.Serializer):
         htm16id = htmID(16, ra, decl)
 
         flagDate = self.validated_data['flagDate']
+        discoveryYear = self.validated_data['year']
         #if not flagDate:
         #    flagDate = datetime.now()
 
-        year = flagDate.year
+        if discoveryYear > 0 and discoveryYear >= 2008 and discoveryYear <= 2030:
+            year = discoveryYear
+        else:
+            year = flagDate.year
 
         # Sometimes the year in the name does NOT correspond to the flag date.  This is
         # especially true for objects flagged in the atlas4 database that were originally
@@ -107,6 +116,8 @@ class EventSerializer(serializers.Serializer):
             event = Struct(**results[0][1])
             separation = results[0][0]
             replyMessage = 'Object already exists'
+            # 2023-02-04 KWS Override the event year with the one of the crossmatched object. Ignore the flag date.
+            year = event.year
 
             try:
                 aka = Akas(ra = ra,
@@ -118,6 +129,7 @@ class EventSerializer(serializers.Serializer):
                            user_id = userId,
                            source_ip = None,
                            original_flag_date = flagDate,
+                           date_inserted = insertDate,
                            htm16id = htm16id)
                 #aka.save()
                 aka.save(force_insert=True)
@@ -135,6 +147,7 @@ class EventSerializer(serializers.Serializer):
                                 survey_database = survey_database,
                                 user_id = userId,
                                 source_ip = None,
+                                date_inserted = insertDate,
                                 htm16id = htm16id)
             else:
                 y = years[year](ra = ra,
@@ -143,6 +156,7 @@ class EventSerializer(serializers.Serializer):
                                 survey_database = survey_database,
                                 user_id = userId,
                                 source_ip = None,
+                                date_inserted = insertDate,
                                 htm16id = htm16id)
             try:
                 #y.save()
@@ -163,7 +177,16 @@ class EventSerializer(serializers.Serializer):
                 return { "event_id": None, "event_counter": None, "info": "Unable to create year entry. The internalObjectId and survey_database combination must be unique." }
                 # Need to raise Custom API exception. See docs.
 
-            suffix = base26(acquiredId - (MULTIPLIER * (year - 2000)))
+            if settings.OBJECT_NAMING_SCHEME == 'aab':
+                # ATLAS naming scheme
+                suffix = base26(acquiredId - (MULTIPLIER * (year - 2000)))
+            elif settings.OBJECT_NAMING_SCHEME == 'a':
+                # Pan-STARRS naming scheme
+                suffix = base26Encode(acquiredId - (MULTIPLIER * (year - 2000)))
+            else:
+                # Default to the ATLAS naming scheme
+                suffix = base26(acquiredId - (MULTIPLIER * (year - 2000)))
+
             try:
                 event = Events(id = acquiredId,
                                ra = ra,
@@ -172,6 +195,7 @@ class EventSerializer(serializers.Serializer):
                                decl_original = decl,
                                year = year,
                                base26suffix = suffix,
+                               date_inserted = insertDate,
                                htm16id = htm16id)
 
                 #event.save()
@@ -192,6 +216,7 @@ class EventSerializer(serializers.Serializer):
                            user_id = userId,
                            source_ip = None,
                            original_flag_date = flagDate,
+                           date_inserted = insertDate,
                            htm16id = htm16id)
                 #aka.save()
                 aka.save(force_insert=True)
@@ -200,7 +225,7 @@ class EventSerializer(serializers.Serializer):
                 #if e[0] == 1062: # Duplicate Key error
                 replyMessage = 'Duplicate AKA - cannot add new AKA'
 
-        objectName = settings.OBJECT_PREFIX + "%d" % (year - 2000) + event.base26suffix
+        objectName = settings.OBJECT_PREFIX + "%02d" % (year - 2000) + event.base26suffix
         #return event
 
         info = { "event_id": objectName, "event_counter": event.id, "info": replyMessage }

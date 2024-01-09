@@ -29,14 +29,14 @@ class Events(models.Model):
 class Akas(models.Model):
     id = models.AutoField(primary_key=True)
     event_id = models.ForeignKey(Events, to_field='id', db_column='event_id', on_delete = models.CASCADE)
-    object_id = models.BigIntegerField()
+    object_id = models.CharField(max_length=180)
     aka = models.CharField(max_length=30, blank=True, null=True)
     ra = models.FloatField()
     decl = models.FloatField()
     survey_database = models.CharField(max_length=50)
     user_id = models.CharField(max_length=50)
     source_ip = models.CharField(max_length=20, blank=True, null=True)
-    original_flag_date = models.DateField()
+    original_flag_date = models.DateTimeField()
     date_inserted = models.DateTimeField()
     htm16id = models.BigIntegerField(db_column='htm16ID')  # Field name made lowercase.
 
@@ -49,7 +49,7 @@ class Akas(models.Model):
 
 class AbstractYear(models.Model):
     id = models.AutoField(primary_key=True)
-    object_id = models.BigIntegerField()
+    object_id = models.CharField(max_length=180)
     ra = models.FloatField()
     decl = models.FloatField()
     survey_database = models.CharField(max_length=50)
@@ -61,6 +61,41 @@ class AbstractYear(models.Model):
     class Meta:
         abstract = True
 
+
+class Y2008(AbstractYear):
+
+    class Meta:
+        managed = False
+        db_table = 'y2008'
+        unique_together = (('object_id', 'survey_database'),)
+
+class Y2009(AbstractYear):
+
+    class Meta:
+        managed = False
+        db_table = 'y2009'
+        unique_together = (('object_id', 'survey_database'),)
+
+class Y2010(AbstractYear):
+
+    class Meta:
+        managed = False
+        db_table = 'y2010'
+        unique_together = (('object_id', 'survey_database'),)
+
+class Y2011(AbstractYear):
+
+    class Meta:
+        managed = False
+        db_table = 'y2011'
+        unique_together = (('object_id', 'survey_database'),)
+
+class Y2012(AbstractYear):
+
+    class Meta:
+        managed = False
+        db_table = 'y2012'
+        unique_together = (('object_id', 'survey_database'),)
 
 class Y2013(AbstractYear):
 

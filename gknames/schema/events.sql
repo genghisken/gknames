@@ -1,5 +1,6 @@
 DROP TABLE `events`;
 
+-- In MySQL 5.7 default timestamp cannot be null. So use datetime.
 CREATE TABLE `events` (
   `id` int unsigned NOT NULL,
   `ra` double NOT NULL,

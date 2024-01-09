@@ -1,6 +1,6 @@
-DROP TABLE `y2021`;
+DROP TABLE `y2008`;
 
-CREATE TABLE `y2021` (
+CREATE TABLE `y2008` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `object_id` varchar(60) NOT NULL,
   `ra` double NOT NULL,
@@ -13,5 +13,5 @@ CREATE TABLE `y2021` (
   PRIMARY KEY `idx_id` (`id`),
   UNIQUE KEY `idx_object_id_survey_database` (`object_id`, `survey_database`),
   KEY `idx_htm16ID` (`htm16ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=210000001
+) ENGINE=InnoDB AUTO_INCREMENT=80000001
 ;

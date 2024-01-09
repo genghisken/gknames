@@ -19,7 +19,12 @@ MULTIPLIER = 10000000
 CAT_ID_RA_DEC_COLS['events'] = [['id', 'ra', 'decl'],1017]
 
 # 2021-12-27 KWS Added years 2013 to 2015 for Pan-STARRS.
-years = {2013: Y2013,
+years = {2008: Y2008,
+         2009: Y2009,
+         2010: Y2010,
+         2011: Y2011,
+         2012: Y2012,
+         2013: Y2013,
          2014: Y2014,
          2015: Y2015,
          2016: Y2016,
